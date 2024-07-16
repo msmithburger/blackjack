@@ -67,3 +67,43 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .playing-card {
+    @apply relative w-32 h-48 bg-white text-black flex flex-col justify-between p-2 rounded-lg shadow-md;
+  }
+
+  .playing-card.hearts,
+  .playing-card.diamonds {
+    @apply text-red-600;
+  }
+
+  .playing-card.clubs,
+  .playing-card.spades {
+    @apply text-black;
+  }
+
+  .card-corner {
+    @apply flex flex-col items-center;
+  }
+
+  .card-value {
+    @apply text-2xl font-bold;
+  }
+
+  .card-suit {
+    @apply text-xl;
+  }
+
+  .card-center {
+    @apply absolute inset-0 flex items-center justify-center text-6xl;
+  }
+
+  .top-left {
+    @apply absolute top-2 left-2;
+  }
+
+  .bottom-right {
+    @apply absolute bottom-2 right-2 rotate-180;
+  }
+}
