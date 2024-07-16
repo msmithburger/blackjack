@@ -16,6 +16,9 @@ const config: Config = {
   // A list of paths to directories that Jest should use to search for files in
   roots: ["<rootDir>/src"],
 
+  // The glob patterns Jest uses to detect test files
+  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+
   // The test environment that will be used for testing
   testEnvironment: "node",
 
