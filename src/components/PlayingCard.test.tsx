@@ -2,24 +2,28 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import PlayingCard from "./PlayingCard";
 
-describe("Card component", () => {
-  it("renders correctly", () => {
+describe("PlayingCard component", () => {
+  it("renders correctly with hearts suit", () => {
     render(<PlayingCard suit="hearts" value="A" />);
-    expect(screen.getByText("A♥")).toBeInTheDocument();
+    expect(screen.getAllByText("A")).toHaveLength(2);
+    expect(screen.getAllByText("♥")).toHaveLength(3);
   });
 
-  it("renders the correct suit symbol for diamonds", () => {
+  it("renders correctly with diamonds suit", () => {
     render(<PlayingCard suit="diamonds" value="K" />);
-    expect(screen.getByText("K♦")).toBeInTheDocument();
+    expect(screen.getAllByText("K")).toHaveLength(2);
+    expect(screen.getAllByText("♦")).toHaveLength(3);
   });
 
-  it("renders the correct suit symbol for clubs", () => {
+  it("renders correctly with clubs suit", () => {
     render(<PlayingCard suit="clubs" value="Q" />);
-    expect(screen.getByText("Q♣")).toBeInTheDocument();
+    expect(screen.getAllByText("Q")).toHaveLength(2);
+    expect(screen.getAllByText("♣")).toHaveLength(3);
   });
 
-  it("renders the correct suit symbol for spades", () => {
+  it("renders correctly with spades suit", () => {
     render(<PlayingCard suit="spades" value="J" />);
-    expect(screen.getByText("J♠")).toBeInTheDocument();
+    expect(screen.getAllByText("J")).toHaveLength(2);
+    expect(screen.getAllByText("♠")).toHaveLength(3);
   });
 });

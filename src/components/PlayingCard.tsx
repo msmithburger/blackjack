@@ -1,3 +1,5 @@
+"use client";
+
 import { Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 
