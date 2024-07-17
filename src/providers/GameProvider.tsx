@@ -1,17 +1,24 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { Card } from "@/types";
+import { createContext, useContext, ReactNode } from "react";
+import { determineWinner } from "@/lib/gameLogic";
+import { useCardAPI } from "@/hooks/useCardAPI";
+import { useGameReducer } from "@/hooks/useGameReducer";
 
 type GameState = "initial" | "playing" | "ended";
 
-interface GameContextType {
+type GameContextType = {
   gameState: GameState;
+  playerCards: Card[];
+  houseCards: Card[];
   playerScore: number;
   houseScore: number;
-  startGame: () => void;
-  hit: () => void;
+  startGame: () => Promise<void>;
+  hit: () => Promise<void>;
   stand: () => void;
-}
+  winner: "player" | "house" | "tie" | null;
+};
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
@@ -24,39 +31,18 @@ export function useGame() {
 }
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [gameState, setGameState] = useState<GameState>("initial");
-  const [playerScore, setPlayerScore] = useState(0);
-  const [houseScore, setHouseScore] = useState(0);
-
-  const startGame = () => {
-    setGameState("playing");
-    setPlayerScore(0);
-    setHouseScore(0);
-  };
-
-  const hit = () => {
-    setPlayerScore((prevScore) => prevScore + 5);
-    if (playerScore > 21) {
-      endGame();
-    }
-  };
-
-  const stand = () => {
-    endGame();
-  };
-
-  const endGame = () => {
-    setGameState("ended");
-    // TODO: Determine winner and display result
-  };
+  const cardAPI = useCardAPI();
+  const { state, actions } = useGameReducer(cardAPI);
 
   const value = {
-    gameState,
-    playerScore,
-    houseScore,
-    startGame,
-    hit,
-    stand,
+    ...state,
+    startGame: actions.startGame,
+    hit: actions.hit,
+    stand: actions.stand,
+    winner:
+      state.gameState === "ended"
+        ? determineWinner(state.playerScore, state.houseScore)
+        : null,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

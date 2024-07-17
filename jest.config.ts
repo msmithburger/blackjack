@@ -44,6 +44,13 @@ const config: Config = {
 
   // Setup files after environment
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+
+  // Specify the tsconfig file
+  globals: {
+    "ts-jest": {
+      tsconfig: "<rootDir>/tsconfig.jest.json",
+    },
+  },
 };
 
 export default config;
