@@ -7,12 +7,13 @@ import {
 } from "./useGameReducer";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useCardAPI } from "./useCardAPI";
+import { Suit } from "@/types";
 
 jest.mock("./useCardAPI", () => ({
   useCardAPI: jest.fn(),
 }));
 
-const cardGenerator = (value: string, suit: string) => ({
+const cardGenerator = (value: string, suit: Suit) => ({
   value,
   suit,
   code: `${value}${suit.toUpperCase()}`,
@@ -40,14 +41,14 @@ describe("useGameReducer", () => {
   describe("updatePlayerCards", () => {
     it("should add a new card to player cards and update score", () => {
       const initialState = {
-        playerCards: [cardGenerator("10", "hearts")],
+        playerCards: [cardGenerator("10", "HEARTS")],
         playerScore: 10,
         gameState: GameState.playing,
         houseCards: [],
         houseScore: 0,
         deckId: "test-deck-id",
       };
-      const newCard = cardGenerator("5", "clubs");
+      const newCard = cardGenerator("5", "CLUBS");
 
       const result = updatePlayerCards(initialState, newCard);
 
@@ -118,12 +119,12 @@ describe("useGameReducer", () => {
         type: "START_GAME" as const,
         payload: {
           playerCards: [
-            cardGenerator("10", "hearts"),
-            cardGenerator("5", "clubs"),
+            cardGenerator("10", "HEARTS"),
+            cardGenerator("5", "CLUBS"),
           ],
           houseCards: [
-            cardGenerator("8", "diamonds"),
-            cardGenerator("7", "spades"),
+            cardGenerator("8", "DIAMONDS"),
+            cardGenerator("7", "SPADES"),
           ],
           deckId: "new-deck-id",
         },
@@ -142,15 +143,15 @@ describe("useGameReducer", () => {
     it("should handle HIT action", () => {
       const initialState = {
         gameState: GameState.playing,
-        playerCards: [cardGenerator("10", "hearts")],
-        houseCards: [cardGenerator("8", "diamonds")],
+        playerCards: [cardGenerator("10", "HEARTS")],
+        houseCards: [cardGenerator("8", "DIAMONDS")],
         playerScore: 10,
         houseScore: 8,
         deckId: "test-deck-id",
       };
       const action = {
         type: "HIT" as const,
-        payload: cardGenerator("5", "clubs"),
+        payload: cardGenerator("5", "CLUBS"),
       };
 
       const result = gameReducer(initialState, action);
@@ -164,8 +165,8 @@ describe("useGameReducer", () => {
     it("should handle STAND action", () => {
       const initialState = {
         gameState: GameState.playing,
-        playerCards: [cardGenerator("10", "hearts")],
-        houseCards: [cardGenerator("8", "diamonds")],
+        playerCards: [cardGenerator("10", "HEARTS")],
+        houseCards: [cardGenerator("8", "DIAMONDS")],
         playerScore: 10,
         houseScore: 8,
         deckId: "test-deck-id",
@@ -180,8 +181,8 @@ describe("useGameReducer", () => {
     it("should handle END_GAME action", () => {
       const initialState = {
         gameState: GameState.playing,
-        playerCards: [cardGenerator("10", "hearts")],
-        houseCards: [cardGenerator("8", "diamonds")],
+        playerCards: [cardGenerator("10", "HEARTS")],
+        houseCards: [cardGenerator("8", "DIAMONDS")],
         playerScore: 10,
         houseScore: 8,
         deckId: "test-deck-id",

@@ -39,18 +39,16 @@ const config: Config = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        tsconfig: "<rootDir>/tsconfig.jest.json",
+      },
+    ],
   },
 
   // Setup files after environment
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-
-  // Specify the tsconfig file
-  globals: {
-    "ts-jest": {
-      tsconfig: "<rootDir>/tsconfig.jest.json",
-    },
-  },
 };
 
 export default config;

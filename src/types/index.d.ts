@@ -4,12 +4,14 @@ type ApiResponse = {
   remaining: number;
 };
 
+type Suit = "HEARTS" | "DIAMONDS" | "CLUBS" | "SPADES";
+
 type Card = {
   code: string;
   image: string;
   images: { svg: string; png: string };
   value: string;
-  suit: string;
+  suit: Suit;
 };
 
-export type { Card, ApiResponse };
+export type { Card, ApiResponse, Suit };
