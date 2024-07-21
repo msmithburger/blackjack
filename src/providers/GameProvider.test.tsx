@@ -1,9 +1,7 @@
 import { render } from "@testing-library/react";
 import { GameProvider, useGame } from "./GameProvider";
-import { useCardAPI } from "@/hooks/useCardAPI";
 import { useGameReducer } from "@/hooks/useGameReducer";
 
-jest.mock("@/hooks/useCardAPI");
 jest.mock("@/hooks/useGameReducer");
 
 // Helper component to access context
@@ -31,7 +29,6 @@ describe("GameProvider", () => {
       stand: jest.fn(),
     };
 
-    (useCardAPI as jest.Mock).mockReturnValue({});
     (useGameReducer as jest.Mock).mockReturnValue({
       state: mockState,
       actions: mockActions,
@@ -67,7 +64,6 @@ describe("GameProvider", () => {
       stand: jest.fn(),
     };
 
-    (useCardAPI as jest.Mock).mockReturnValue({});
     (useGameReducer as jest.Mock).mockReturnValue({
       state: mockState,
       actions: mockActions,

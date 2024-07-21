@@ -1,5 +1,6 @@
 type ApiResponse = {
   success: boolean;
+  error?: string;
   deck_id: string;
   remaining: number;
 };

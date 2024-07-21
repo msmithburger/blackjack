@@ -3,7 +3,6 @@
 import { Card } from "@/types";
 import { createContext, useContext, ReactNode } from "react";
 import { determineWinner } from "@/lib/gameLogic";
-import { useCardAPI } from "@/hooks/useCardAPI";
 import { useGameReducer } from "@/hooks/useGameReducer";
 
 type GameState = "initial" | "playing" | "ended";
@@ -14,6 +13,8 @@ type GameContextType = {
   houseCards: Card[];
   playerScore: number;
   houseScore: number;
+  remaining: number;
+  deckId: string | null;
   startGame: () => Promise<void>;
   hit: () => Promise<void>;
   stand: () => void;
@@ -31,8 +32,7 @@ export function useGame() {
 }
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const cardAPI = useCardAPI();
-  const { state, actions } = useGameReducer(cardAPI);
+  const { state, actions } = useGameReducer();
 
   const value = {
     ...state,

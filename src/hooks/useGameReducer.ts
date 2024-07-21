@@ -1,8 +1,7 @@
 import { useReducer, useCallback } from "react";
 import { Card } from "@/types";
-import { calculateScore, isGameOver } from "@/lib/gameLogic";
+import { calculateScore, getCards, isGameOver } from "@/lib/gameLogic";
 import { pipe } from "@/lib/fp";
-import { useCardAPI } from "./useCardAPI";
 
 export enum GameState {
   initial = "initial",
@@ -10,32 +9,29 @@ export enum GameState {
   ended = "ended",
 }
 
-type State = {
+export type State = {
   gameState: GameState;
   playerCards: Card[];
   houseCards: Card[];
   playerScore: number;
   houseScore: number;
   deckId: string | null;
+  remaining: number;
 };
 
 type Action =
   | {
       type: "START_GAME";
-      payload: { playerCards: Card[]; houseCards: Card[]; deckId: string };
+      payload: {
+        playerCards: Card[];
+        houseCards: Card[];
+        deckId: string;
+        remaining: number;
+      };
     }
-  | { type: "HIT"; payload: Card }
+  | { type: "HIT"; payload: { card: Card; remaining: number } }
   | { type: "STAND" }
   | { type: "END_GAME" };
-
-const initialState: State = {
-  gameState: GameState.initial,
-  playerCards: [],
-  houseCards: [],
-  playerScore: 0,
-  houseScore: 0,
-  deckId: null,
-};
 
 export const updatePlayerCards = (state: State, newCard: Card): State => ({
   ...state,
@@ -61,6 +57,7 @@ export const gameReducer = (state: State, action: Action): State => {
           playerCards: action.payload.playerCards,
           houseCards: action.payload.houseCards,
           deckId: action.payload.deckId,
+          remaining: action.payload.remaining,
         }),
         (s) => ({
           ...s,
@@ -71,7 +68,8 @@ export const gameReducer = (state: State, action: Action): State => {
     case "HIT":
       return pipe(
         state,
-        (s) => updatePlayerCards(s, action.payload),
+        (s) => updatePlayerCards(s, action.payload.card),
+        (s) => ({ ...s, remaining: action.payload.remaining }),
         checkGameOver
       );
     case "STAND":
@@ -82,28 +80,38 @@ export const gameReducer = (state: State, action: Action): State => {
   }
 };
 
-// Use the return type of useCardAPI
-export function useGameReducer(cardAPI: ReturnType<typeof useCardAPI>) {
+export function useGameReducer(
+  initialState: State = {
+    gameState: GameState.initial,
+    playerCards: [],
+    houseCards: [],
+    playerScore: 0,
+    houseScore: 0,
+    deckId: null,
+    remaining: 52,
+  }
+) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
   const startGame = useCallback(async () => {
-    const { cards, deck_id } = await cardAPI.fetchCards(4);
+    const { cards, remaining, deckId } = await getCards(state, 4);
+
     dispatch({
       type: "START_GAME",
       payload: {
         playerCards: cards.slice(0, 2),
         houseCards: cards.slice(2, 4),
-        deckId: deck_id,
+        deckId,
+        remaining,
       },
     });
-  }, [cardAPI]);
+  }, [state]);
 
   const hit = useCallback(async () => {
-    if (!state.deckId) throw new Error("Deck not initialized");
-    const { cards } = await cardAPI.fetchCards(1, state.deckId);
+    const { cards, remaining } = await getCards(state, 1);
     const [newCard] = cards;
-    dispatch({ type: "HIT", payload: newCard });
-  }, [cardAPI, state.deckId]);
+    dispatch({ type: "HIT", payload: { card: newCard, remaining } });
+  }, [state]);
 
   const stand = useCallback(() => dispatch({ type: "STAND" }), []);
 
